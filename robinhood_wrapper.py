@@ -73,7 +73,7 @@ def get_watchlist_symbols():
     for name in my_list_names:
         for item in robin_stocks.get_watchlist_by_name(name):
             instrument_data = robin_stocks.get_instrument_by_url(item['instrument'])
-            symbol = instrument_data['symbTHISismylogin@87ol']
+            symbol = instrument_data['symbol']
             watchlist_symbols.append(symbol)
 
     # Remove stocks in your portfolio from the watchlist
@@ -96,6 +96,14 @@ def get_open_orders():
     else:
         return open_orders
 
+def get_order_state():
+    open_orders = robin_stocks.get_all_open_orders()
+    if open_orders[0] is None:
+        return False
+    else:
+        state = open_orders[0]['state']
+        return state
+
 def get_dividend_yield(symbol):
     fundamentals = robin_stocks.get_fundamentals(symbol)
     dividend_yield = fundamentals[0]['dividend_yield']
@@ -107,6 +115,13 @@ def get_dividend(symbol):
     current_price = get_latest_pricing(symbol)
     dividend = round(current_price * (dividend_yield / 100), 2)
     return dividend
+
+def get_payout_ratio(symbol):
+    # payout_ratio = dividend / current_eps_estimate
+    eps_estimate = get_eps_estimates(symbol)[-1:]
+    payout_ratio = (get_dividend(symbol) / 4.0 / eps_estimate[0]) * 100
+    payout_ratio = round(payout_ratio, 2)
+    return payout_ratio
 
 def get_price_earnings_ratio(symbol):
     fundamentals = robin_stocks.get_fundamentals(symbol)
@@ -157,6 +172,20 @@ def get_eps_actuals(symbol):
         eps_actuals = [float(i) for i in eps_actuals if i is not None]
         return eps_actuals
 
+def get_eps_estimates(symbol):
+    eps = []
+    eps_estimates = []
+    eps_info = robin_stocks.get_earnings(symbol)
+
+    # Some companies do not provide EPS data
+    if eps_info[0] is None:
+        return None
+    else:
+        eps = [item['eps'] for item in eps_info]
+        eps_estimates = [item['estimate'] for item in eps]
+        eps_estimates = [float(i) for i in eps_estimates if i is not None]
+        return eps_estimates
+
 def get_shares_outstanding(symbol):
     fundamentals = robin_stocks.get_fundamentals(symbol)
     shares_outstanding = fundamentals[0]['shares_outstanding']
@@ -180,8 +209,10 @@ def main():
     password = 'your_password_here'
     token_dict = robinhood_auth(username, password , 60,
                                 'internal', True, True )
+    #print(market_buy('LLNW', 1, time='gfd'))
+    #print(get_open_orders())
+
     print(get_dividend('ABBV'))
-    print(get_dividend('BTI'))
 
 if __name__ == '__main__':
     main()

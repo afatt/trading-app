@@ -6,12 +6,14 @@
 import abc
 import logging
 import time
+from datetime import datetime
 
 # Third Party
 import schedule
 
 # Local Modules
 import robinhood_wrapper as broker
+import yahoo_wrapper as yahoo
 
 
 class Trader():
@@ -22,8 +24,8 @@ class Trader():
                                                  'your_password_here',
                                                  86400, 'internal', True, True )
 
-    def execute_model(self, prospects):
-        self._model.model_interface(prospects)
+    def execute_model(self):
+        self._model.model_interface()
 
 
 class Model(abc.ABC):
@@ -33,7 +35,7 @@ class Model(abc.ABC):
     '''
 
     @abc.abstractmethod
-    def model_interface(self, prospects):
+    def model_interface(self):
         pass
 
 
@@ -45,14 +47,14 @@ class DividendAnalyzer(Model):
                             format='%(asctime)s %(message)s',
                             datefmt='%H:%M:%S')
 
-    def model_interface(self, prospects):
+    def model_interface(self):
+        prospects = broker.get_watchlist_symbols()
         purchase_symbol = self.trade_study(prospects)
         num_shares = self.order_quantity(purchase_symbol)
-        #order_info = broker.market_buy(purchase_symbol, num_shares, time='gtc')
+        #order_info = broker.market_buy(purchase_symbol, num_shares, time='gfd')
         #print(order_info)
-        print('Purchasing %s shares of %s' % (str(shares), purchase_symbol))
-        logging.INFO('Purchasing %s shares '
-                     'of %s' % (str(shares), purchase_symbol))
+        print('Purchasing %s shares of %s' % (str(num_shares), purchase_symbol))
+        #logging.INFO('Purchasing %s shares of %s' % (str(num_shares), purchase_symbol))
 
     def trade_study(self, prospects):
         '''Why certain weights got the value they did
@@ -61,13 +63,13 @@ class DividendAnalyzer(Model):
 
         # Weights on a scale of 1 to 5
         eps_weight = 4.0
-        dividend_yield_weight = 2.0
-        dividend_payout_weight = 3.0
+        dividend_yield_weight = 3.0
+        payout_ratio_weight = 3.0
         annual_return_weight = 5.0
         analyst_rating_weight = 2.0
 
         # Dictionary to hold the total scores of each prospect
-        # Symbol(key), [unweighted_score, weighted_score](value)
+        # Symbol(key),  weighted_score(value)
         score_dict = {}
 
         for symbol in prospects:
@@ -75,35 +77,56 @@ class DividendAnalyzer(Model):
             dividend_yield_score = self.dividend_yield_analysis(symbol)
             analyst_rating_score = self.analyst_rating_analysis(symbol)
             annual_return_score = self.annual_return_analysis(symbol)
-            #dividend_payout_score = self.dividend_payout_analysis(symbol)
-
+            payout_ratio_score = self.payout_ratio_analysis(symbol)
+            print(symbol)
+            print('Eps: %s, Div Yield: %s, ARating: %s, AnReturn: %s, PayRatio:'
+                  ' %s' % (str(eps_score), str(dividend_yield_score), \
+                  str(analyst_rating_score), str(annual_return_score), \
+                  str(payout_ratio_score)))
             unweighted_score = eps_score + dividend_yield_score + \
-                               analyst_rating_score + annual_return_score
+                               analyst_rating_score + annual_return_score + \
+                               payout_ratio_score
             weighted_score = eps_score * eps_weight + dividend_yield_score * \
                              dividend_yield_weight + analyst_rating_score * \
                              analyst_rating_weight + annual_return_score * \
-                             annual_return_weight
-            #print('%s score: %s' % (symbol, str(weighted_score)))
+                             annual_return_weight + payout_ratio_score * \
+                             payout_ratio_weight
             score_dict[symbol] = weighted_score
+            # IF A SCORE IS TOO LOW REMOVE IT FROM THE WATCHLIST
 
         # Arange the dictionary from Highest Score to Lowest Score
         ranking_list = sorted(score_dict, key=score_dict.get, reverse=True)
         return ranking_list[0]
 
-    def dividend_payout_analysis(self, symbol):
+    def payout_ratio_analysis(self, symbol):
         '''
         '''
-        # dividend_payout = annual_dividend / curr_eps_estimated
-        return dividend_payout_score
+        # payout_ratio = annual_dividend / curr_eps_estimated
+        payout_ratio = yahoo.get_payout_ratio(symbol)
+        if payout_ratio is None:
+            payout_ratio_score = 1.0
+            return payout_ratio_score
+        else:
+            if payout_ratio <= 20.0:
+                payout_ratio_score = 5.0
+            elif 30.0 >= payout_ratio > 20.0:
+                payout_ratio_score = 4.0
+            elif 40.0 >= payout_ratio > 30.0:
+                payout_ratio_score = 3.0
+            elif 50.0 >= payout_ratio > 40.0:
+                payout_ratio_score = 2.0
+            else:
+                payout_ratio_score = 1.0
+            return payout_ratio_score
 
     def annual_return_analysis(self, symbol):
-        '''
+        '''Calculates the annual return in dividends based on the user's weekly
+           contribution and returns a score based of return thresholds
+           returns: annual_return_score(float)
         '''
         dividend = broker.get_dividend(symbol)
         num_of_shares = self.order_quantity(symbol)
         annual_return = round(dividend * num_of_shares, 2)
-        # print('%s, dividend: %s, annual_return: '
-        #       '%s' % (symbol, str(dividend), str(annual_return)))
         if annual_return > 20.0:
             annual_return_score = 5.0
         elif 15.0 < annual_return <= 20.0:
@@ -117,9 +140,11 @@ class DividendAnalyzer(Model):
         return annual_return_score
 
     def order_quantity(self, symbol):
-        '''Weekly contribution to be $500.00 for the 52 Mondays of 2020
+        '''Calculates the number of shares that can be ordered based off the
+           user's weekly contribution
+           returns: shares(int)
         '''
-        contribution = 500.00
+        contribution = 1000.00
         current_price = broker.get_latest_pricing(symbol)
         shares = int(contribution / current_price)
         return shares
@@ -201,7 +226,7 @@ class SimpleMA(Model):
                             datefmt='%H:%M:%S')
         self.daily_trade_symbols = []
 
-    def model_interface(self, prospects):
+    def model_interface(self):
         for symbol in prospects:
             history = broker.get_hist_price(symbol, span='year',
                                             bounds='regular')
@@ -259,10 +284,14 @@ def main():
     dividend_analyzer = DividendAnalyzer()
     trader_dividend = Trader(dividend_analyzer)
 
-    prospects = broker.get_watchlist_symbols()
+    #prospects = broker.get_watchlist_symbols()
+    #trader_dividend.execute_model(prospects)
     while True:
-        trader_dividend.execute_model(prospects)
-        time.sleep(60)
+        now = datetime.now()
+        current_time = now.strftime('%H:%M')
+        if current_time == '09:06':
+            trader_dividend.execute_model()
+        time.sleep(35)
 
 
 if __name__ == '__main__':
