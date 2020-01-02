@@ -1,4 +1,6 @@
 # trading-app
+This is a temporary format for the README this is not what a README is 
+used for
 
 # Before running the app
 1. Explain to the user the idea behind the app
