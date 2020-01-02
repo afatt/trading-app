@@ -1,5 +1,5 @@
 # trading-app
-This is a temporary format for the README this is not what a README is 
+This is a temporary format for the README this is not what a README is
 used for
 
 # Before running the app
@@ -16,5 +16,12 @@ used for
    each week
    - Check their robinhood buying_power to make sure they have enough
      in their account to invest and suggest adding more if they do not
-3. Ask the user what day of the week they would like to invest and what 
+3. Ask the user what day of the week they would like to invest and what
    frequency once per month, once per week?
+
+# Useful links and References
+robin_stocks functions:
+http://www.robin-stocks.com/en/latest/functions.html
+
+yfinance github:
+https://github.com/ranaroussi/yfinance

@@ -1,7 +1,8 @@
 #!/usr/bin/python
-'''
+'''The main in this module is for testing new functions and changes only
 '''
 
+import util
 import robin_stocks
 
 
@@ -205,8 +206,7 @@ def get_net_income(symbol):
 
 def main():
     # FOR TESTING PURPOSES ONLY
-    username = 'your_username_here'
-    password = 'your_password_here'
+    username, password = util.load_login_info()
     token_dict = robinhood_auth(username, password , 60,
                                 'internal', True, True )
     #print(market_buy('LLNW', 1, time='gfd'))

@@ -4,14 +4,15 @@
 
 # Standard Library
 import abc
-import logging
 import time
+import logging
 from datetime import datetime
 
 # Third Party
 import schedule
 
 # Local Modules
+import util
 import robinhood_wrapper as broker
 import yahoo_wrapper as yahoo
 
@@ -20,9 +21,10 @@ class Trader():
 
     def __init__(self, model):
         self._model = model
-        self._token_dict = broker.robinhood_auth('your_username_here',
-                                                 'your_password_here',
-                                                 86400, 'internal', True, True )
+        self._username, self._password = util.load_login_info()
+        self._token_dict = broker.robinhood_auth(self._username,
+                                                 self._password, 86400,
+                                                 'internal', True, True )
 
     def execute_model(self):
         self._model.model_interface()
@@ -51,6 +53,9 @@ class DividendAnalyzer(Model):
         prospects = broker.get_watchlist_symbols()
         purchase_symbol = self.trade_study(prospects)
         num_shares = self.order_quantity(purchase_symbol)
+        # Make this its own method
+        # Check if the buying_power is enough to purchase this many stocks
+        # possibly a return item from order_quantity()
         #order_info = broker.market_buy(purchase_symbol, num_shares, time='gfd')
         #print(order_info)
         print('Purchasing %s shares of %s' % (str(num_shares), purchase_symbol))
@@ -289,7 +294,7 @@ def main():
     while True:
         now = datetime.now()
         current_time = now.strftime('%H:%M')
-        if current_time == '09:06':
+        if current_time == '13:13':
             trader_dividend.execute_model()
         time.sleep(35)
 

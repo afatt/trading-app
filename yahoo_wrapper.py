@@ -1,5 +1,5 @@
 #!/usr/bin/python
-'''
+'''The main in this module is for testing new functions and changes only
 '''
 
 import yfinance as yf
