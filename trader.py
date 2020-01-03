@@ -21,7 +21,7 @@ class Trader():
 
     def __init__(self, model):
         self._model = model
-        self._username, self._password = util.load_login_info()
+        self._username, self._password = util.get_login_info()
         self._token_dict = broker.robinhood_auth(self._username,
                                                  self._password, 86400,
                                                  'internal', True, True )
@@ -150,7 +150,7 @@ class DividendAnalyzer(Model):
            user's weekly contribution
            returns: shares(int)
         '''
-        contribution = 1000.00
+        contribution = util.get_contribution()
         current_price = broker.get_latest_pricing(symbol)
         shares = int(contribution / current_price)
         return shares
