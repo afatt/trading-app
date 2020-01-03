@@ -73,6 +73,7 @@ class DividendAnalyzer(Model):
         annual_return_weight = 5.0
         analyst_rating_weight = 2.0
         #sector_weight = 2.0
+        #fair_value_weight = 2.0
 
         # Dictionary to hold the total scores of each prospect
         # Symbol(key),  weighted_score(value)
