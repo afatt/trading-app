@@ -29,28 +29,21 @@ def get_industry(symbol):
     industry = stock.info['industry']
     return industry
 
-def get_test(symbol):
+def get_sector(symbol):
     stock = yf.Ticker(symbol)
-    est = stock.quarterly_earnings
-    return est
+    sector = stock.info['sector']
+    return sector
 
-def get_cashflow(symbol):
+def get_forward_eps(symbol):
     stock = yf.Ticker(symbol)
-    est = stock.financials
-    return est
-
-def get_trailing_eps(symbol):
-    stock = yf.Ticker(symbol)
-    trailing_eps = stock.info['trailingEps']
-    trailing_eps = float(trailing_eps)
-    return trailing_eps
+    forward_eps = stock.info['forwardEps']
+    forward_eps = float(forward_eps)
+    return forward_eps
 
 def main():
     # FOR TESTING PURPOSES ONLY
     symbol = 'MED'
-    print(get_info(symbol))
-    print(get_payout_ratio(symbol))
-    print(get_trailing_eps(symbol))
+    print(get_sector(symbol))
 
 if __name__ == '__main__':
     main()

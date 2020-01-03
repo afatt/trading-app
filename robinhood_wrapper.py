@@ -212,7 +212,7 @@ def main():
     #print(market_buy('LLNW', 1, time='gfd'))
     #print(get_open_orders())
 
-    print(get_dividend('ABBV'))
+    print(robin_stocks.get_earnings('ABBV'))
 
 if __name__ == '__main__':
     main()

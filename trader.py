@@ -67,11 +67,12 @@ class DividendAnalyzer(Model):
         '''
 
         # Weights on a scale of 1 to 5
+        # Place into a yaml file and let advanced users tweak the weights
         eps_weight = 4.0
-        dividend_yield_weight = 3.0
         payout_ratio_weight = 3.0
         annual_return_weight = 5.0
         analyst_rating_weight = 2.0
+        #sector_weight = 2.0
 
         # Dictionary to hold the total scores of each prospect
         # Symbol(key),  weighted_score(value)
@@ -79,7 +80,6 @@ class DividendAnalyzer(Model):
 
         for symbol in prospects:
             eps_score = self.eps_analysis(symbol)
-            dividend_yield_score = self.dividend_yield_analysis(symbol)
             analyst_rating_score = self.analyst_rating_analysis(symbol)
             annual_return_score = self.annual_return_analysis(symbol)
             payout_ratio_score = self.payout_ratio_analysis(symbol)
@@ -104,7 +104,8 @@ class DividendAnalyzer(Model):
         return ranking_list[0]
 
     def payout_ratio_analysis(self, symbol):
-        '''
+        '''Yahoo payout ratio is occasionally much greater than 100%. Need to
+           find out how they do their calculation
         '''
         # payout_ratio = annual_dividend / curr_eps_estimated
         payout_ratio = yahoo.get_payout_ratio(symbol)
@@ -178,24 +179,9 @@ class DividendAnalyzer(Model):
                 analyst_score = 1.0
             return analyst_score
 
-    def dividend_yield_analysis(self, symbol):
-        '''THIS IS NOW REDUNDANT DUE TO THE ANNUAL RETURN ANALYSIS
-        '''
-        dividend_yield = broker.get_dividend_yield(symbol)
-        if dividend_yield > 4.0:
-            dividend_yield_score = 5.0
-        elif 3.0 < dividend_yield <= 4.0:
-            dividend_yield_score = 4.0
-        elif 2.0 < dividend_yield <= 3.0:
-            dividend_yield_score = 3.0
-        elif 1.0 < dividend_yield <= 2.0:
-            dividend_yield_score = 2.0
-        else:
-            dividend_yield_score = 1.0
-        return dividend_yield_score
-
     def eps_analysis(self, symbol):
         '''EPS (Earnings Per Share) Analysis
+           Possibly include the trailing eps of the last 4 eps values
         '''
         eps_actuals = broker.get_eps_actuals(symbol)
         if eps_actuals is None:
@@ -294,7 +280,7 @@ def main():
     while True:
         now = datetime.now()
         current_time = now.strftime('%H:%M')
-        if current_time == '13:13':
+        if current_time == '19:03':
             trader_dividend.execute_model()
         time.sleep(35)
 
