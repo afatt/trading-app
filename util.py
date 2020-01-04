@@ -16,3 +16,15 @@ def get_contribution():
         user_pass = yaml.load(file, Loader=yaml.FullLoader)
         contribution = user_pass['contribution']
     return contribution
+
+def get_frequency():
+    with open('user_info.yml') as file:
+        user_pass = yaml.load(file, Loader=yaml.FullLoader)
+        contribution = user_pass['frequency']
+    return contribution
+
+def get_day_of_week():
+    with open('user_info.yml') as file:
+        user_pass = yaml.load(file, Loader=yaml.FullLoader)
+        contribution = user_pass['day_of_week']
+    return contribution

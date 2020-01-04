@@ -50,6 +50,7 @@ class DividendAnalyzer(Model):
                             datefmt='%H:%M:%S')
 
     def model_interface(self):
+        start_time = datetime.now()
         prospects = broker.get_watchlist_symbols()
         purchase_symbol = self.trade_study(prospects)
         num_shares = self.order_quantity(purchase_symbol)
@@ -59,6 +60,7 @@ class DividendAnalyzer(Model):
         #order_info = broker.market_buy(purchase_symbol, num_shares, time='gfd')
         #print(order_info)
         print('Purchasing %s shares of %s' % (str(num_shares), purchase_symbol))
+        print('Ran in %s seconds' % str(datetime.now() - start_time))
         #logging.INFO('Purchasing %s shares of %s' % (str(num_shares), purchase_symbol))
 
     def trade_study(self, prospects):
@@ -85,15 +87,12 @@ class DividendAnalyzer(Model):
             annual_return_score = self.annual_return_analysis(symbol)
             payout_ratio_score = self.payout_ratio_analysis(symbol)
             print(symbol)
-            print('Eps: %s, Div Yield: %s, ARating: %s, AnReturn: %s, PayRatio:'
-                  ' %s' % (str(eps_score), str(dividend_yield_score), \
-                  str(analyst_rating_score), str(annual_return_score), \
-                  str(payout_ratio_score)))
-            unweighted_score = eps_score + dividend_yield_score + \
-                               analyst_rating_score + annual_return_score + \
-                               payout_ratio_score
-            weighted_score = eps_score * eps_weight + dividend_yield_score * \
-                             dividend_yield_weight + analyst_rating_score * \
+            print('Eps: %s, ARating: %s, AnReturn: %s, PayRatio:'
+                  ' %s' % (str(eps_score), str(analyst_rating_score), \
+                  str(annual_return_score), str(payout_ratio_score)))
+            unweighted_score = eps_score + analyst_rating_score + \
+                               annual_return_score + payout_ratio_score
+            weighted_score = eps_score * eps_weight + analyst_rating_score * \
                              analyst_rating_weight + annual_return_score * \
                              annual_return_weight + payout_ratio_score * \
                              payout_ratio_weight
@@ -276,14 +275,10 @@ def main():
     dividend_analyzer = DividendAnalyzer()
     trader_dividend = Trader(dividend_analyzer)
 
-    #prospects = broker.get_watchlist_symbols()
-    #trader_dividend.execute_model(prospects)
+    schedule.every(2).minutes.do(trader_dividend.execute_model)
     while True:
-        now = datetime.now()
-        current_time = now.strftime('%H:%M')
-        if current_time == '19:03':
-            trader_dividend.execute_model()
-        time.sleep(35)
+        schedule.run_pending()
+        time.sleep(1)
 
 
 if __name__ == '__main__':
