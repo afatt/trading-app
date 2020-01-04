@@ -208,74 +208,25 @@ class DividendAnalyzer(Model):
        return sum(prices) / len(prices)
 
 
-class SimpleMA(Model):
-
-    def __init__(self):
-        logging.basicConfig(filename='simple_ma.log',
-                            level=logging.INFO,
-                            format='%(asctime)s %(message)s',
-                            datefmt='%H:%M:%S')
-        self.daily_trade_symbols = []
-
-    def model_interface(self):
-        for symbol in prospects:
-            history = broker.get_hist_price(symbol, span='year',
-                                            bounds='regular')
-            closing_prices = []
-            dates = []
-            closing_prices = [float(i['close_price']) for i in history]
-            last_50 = closing_prices[-50:]
-            last_200 = closing_prices[-200:]
-            simple_50ma = round(self.simple_average(last_50), 2)
-            simple_200ma = round(self.simple_average(last_200), 2)
-
-            # Golden Cross
-            if simple_50ma > simple_200ma:
-                if not broker.get_open_orders():
-                    if symbol not in self.daily_trade_symbols:
-                        # IF SYMBOL IN NOT IN daily_trade_symbols
-                        quantity = self.order_quantity(symbol)
-                        #order_info = broker.market_buy(symbol, quantity, time='gtc')
-                        print('Purchasing: %s shares '
-                              'of %s' % (str(quantity), symbol))
-                        logging.info('Purchasing: %s shares'
-                                     ' of %s' % (str(quantity), symbol))
-                        self.daily_trade_symbols.append(symbol)
-                else:
-                    print('Could not purchase: %s due to open order' % symbol)
-                    logging.warning('Could not purchase: %s '
-                                   'due to open order' % symbol)
-
-            # Death Cross
-            elif simple_200ma < simple_50ma:
-                # IF SYMBOL IS IN PORTFOLIO SELL ALL SHARES (BUT THIS MIGHT LEAD
-                # TO MULTIPLE PURCHASES OF THIS STOCK IN ONE DAY)
-                if symbol in self.daily_trade_symbols:
-                    print('Selling: %s' % symbol)
-                    logging.info('Selling: %s' % symbol)
-            else:
-              pass
-
-    def simple_average(self, prices):
-       return sum(prices) / len(prices)
-
-    def order_quantity(self, symbol):
-        '''No single stock shall be greater than 20 Percent of a portfolio
-        '''
-        buying_power = broker.get_buying_power()
-        spread = buying_power * .2
-        current_price = broker.get_latest_pricing(symbol)
-        current_price = [float(i) for i in current_price]
-        shares = int(spread / current_price[0])
-        return shares
-
-
 def main():
     # If portfolio hits the 52 dividend stocks quota start balancing model
     dividend_analyzer = DividendAnalyzer()
     trader_dividend = Trader(dividend_analyzer)
 
-    schedule.every(2).minutes.do(trader_dividend.execute_model)
+    day_of_week = util.get_day_of_week()
+    if day_of_week in 'monday':
+        schedule.every().monday.at('10:00').do(trader_dividend.execute_model)
+    elif day_of_week in 'tuesday':
+        schedule.every().tuesday.at('10:00').do(trader_dividend.execute_model)
+    elif day_of_week in 'wednesday':
+        schedule.every().wednesday.at('10:00').do(trader_dividend.execute_model)
+    elif day_of_week in 'thursday':
+        schedule.every().thursday.at('10:00').do(trader_dividend.execute_model)
+    else:
+        schedule.every().friday.at('10:00').do(trader_dividend.execute_model)
+
+    #schedule.every(1).minutes.do(trader_dividend.execute_model)
+    #schedule.every(1).saturday.at('15:56').do(trader_dividend.execute_model)
     while True:
         schedule.run_pending()
         time.sleep(1)

@@ -1,9 +1,7 @@
 #!/usr/bin/python
 '''Check user_info.yml and create if doesnt exist
    Prompt the user for robinhood username and password and save in user_info.yml
-   Prompt the user for weekly, biweekly, or monthly contribution and save in
-   user_info.yml
-   Prompt user for day of the week Monday - Friday
+   Prompt user for day of the week Monday - Friday to automatically invest
    Prompt the user for contribution amount in $ (US Dollars)
    Run trader.py
 '''
@@ -23,13 +21,8 @@ def prompt_user_pass():
        user_info.yml
     '''
 
-def prompt_frequency():
-    '''Prompt the user for weekly, biweekly, or monthly contribution and save in
-       user_info.yml
-    '''
-
 def prompt_day_of_week():
-    '''Prompt user for day of the week Monday - Friday
+    '''Prompt user for day of the week Monday - Friday to automatically invest
     '''
 
 def prompt_contribution():
