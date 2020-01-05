@@ -53,15 +53,22 @@ class DividendAnalyzer(Model):
         start_time = datetime.now()
         prospects = broker.get_watchlist_symbols()
         purchase_symbol = self.trade_study(prospects)
-        num_shares = self.order_quantity(purchase_symbol)
+        num_shares, total_cost = self.order_quantity(purchase_symbol)
         # Make this its own method
-        # Check if the buying_power is enough to purchase this many stocks
-        # possibly a return item from order_quantity()
-        #order_info = broker.market_buy(purchase_symbol, num_shares, time='gfd')
-        #print(order_info)
-        print('Purchasing %s shares of %s' % (str(num_shares), purchase_symbol))
+        buying_power = broker.get_buying_power()
+        if buying_power >= total_cost:
+            #order_info = broker.market_buy(purchase_symbol, num_shares, time='gfd')
+            #print(order_info)
+            message = ('Purchasing %s shares '
+                       'of %s' % (str(num_shares), purchase_symbol))
+            print(message)
+            logging.info(message)
+        else:
+            message = ('Could not purchase %s shares of %s due to '
+                      'insufficient funds' % (str(num_shares), purchase_symbol))
+            print(message)
+            logging.info(message)
         print('Ran in %s seconds' % str(datetime.now() - start_time))
-        #logging.INFO('Purchasing %s shares of %s' % (str(num_shares), purchase_symbol))
 
     def trade_study(self, prospects):
         '''Why certain weights got the value they did
@@ -131,7 +138,7 @@ class DividendAnalyzer(Model):
            returns: annual_return_score(float)
         '''
         dividend = broker.get_dividend(symbol)
-        num_of_shares = self.order_quantity(symbol)
+        num_of_shares, total_cost = self.order_quantity(symbol)
         annual_return = round(dividend * num_of_shares, 2)
         if annual_return > 20.0:
             annual_return_score = 5.0
@@ -153,7 +160,8 @@ class DividendAnalyzer(Model):
         contribution = util.get_contribution()
         current_price = broker.get_latest_pricing(symbol)
         shares = int(contribution / current_price)
-        return shares
+        total_cost = shares * current_price
+        return shares, total_cost
 
     def analyst_rating_analysis(self, symbol):
         '''
@@ -213,19 +221,19 @@ def main():
     dividend_analyzer = DividendAnalyzer()
     trader_dividend = Trader(dividend_analyzer)
 
-    day_of_week = util.get_day_of_week()
-    if day_of_week in 'monday':
-        schedule.every().monday.at('10:00').do(trader_dividend.execute_model)
-    elif day_of_week in 'tuesday':
-        schedule.every().tuesday.at('10:00').do(trader_dividend.execute_model)
-    elif day_of_week in 'wednesday':
-        schedule.every().wednesday.at('10:00').do(trader_dividend.execute_model)
-    elif day_of_week in 'thursday':
-        schedule.every().thursday.at('10:00').do(trader_dividend.execute_model)
-    else:
-        schedule.every().friday.at('10:00').do(trader_dividend.execute_model)
+    # day_of_week = util.get_day_of_week()
+    # if day_of_week in 'monday':
+    #     schedule.every().monday.at('10:00').do(trader_dividend.execute_model)
+    # elif day_of_week in 'tuesday':
+    #     schedule.every().tuesday.at('10:00').do(trader_dividend.execute_model)
+    # elif day_of_week in 'wednesday':
+    #     schedule.every().wednesday.at('10:00').do(trader_dividend.execute_model)
+    # elif day_of_week in 'thursday':
+    #     schedule.every().thursday.at('10:00').do(trader_dividend.execute_model)
+    # else:
+    #     schedule.every().friday.at('10:00').do(trader_dividend.execute_model)
 
-    #schedule.every(1).minutes.do(trader_dividend.execute_model)
+    schedule.every(1).minutes.do(trader_dividend.execute_model)
     #schedule.every(1).saturday.at('15:56').do(trader_dividend.execute_model)
     while True:
         schedule.run_pending()

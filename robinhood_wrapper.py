@@ -206,13 +206,13 @@ def get_net_income(symbol):
 
 def main():
     # FOR TESTING PURPOSES ONLY
-    username, password = util.load_login_info()
+    username, password = util.get_login_info()
     token_dict = robinhood_auth(username, password , 60,
                                 'internal', True, True )
     #print(market_buy('LLNW', 1, time='gfd'))
     #print(get_open_orders())
 
-    print(robin_stocks.get_earnings('ABBV'))
+    print(robin_stocks.load_account_profile())
 
 if __name__ == '__main__':
     main()
