@@ -83,7 +83,7 @@ def execute_trader():
     day_of_week = day_of_week.lower()
     if day_of_week in 'monday':
         print('Executing trader at 10:00am on Monday')
-        schedule.every().monday.at('16:04').do(trader_dividend.execute_model)
+        schedule.every().monday.at('10:00').do(trader_dividend.execute_model)
     elif day_of_week in 'tuesday':
         schedule.every().tuesday.at('10:00').do(trader_dividend.execute_model)
     elif day_of_week in 'wednesday':
@@ -94,7 +94,6 @@ def execute_trader():
         schedule.every().friday.at('10:00').do(trader_dividend.execute_model)
 
     #schedule.every(1).minutes.do(trader_dividend.execute_model)
-    #schedule.every(1).saturday.at('15:56').do(trader_dividend.execute_model)
     while True:
         schedule.run_pending()
         time.sleep(1)
