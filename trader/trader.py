@@ -55,9 +55,10 @@ class DividendAnalyzer(Model):
         num_shares, total_cost = self.order_quantity(purchase_symbol)
         # Make this its own method
         buying_power = broker.get_buying_power()
+        print('Buying power: %s' % str(buying_power))
         if buying_power >= total_cost:
-            #order_info = broker.market_buy(purchase_symbol, num_shares, time='gfd')
-            #print(order_info)
+            order_info = broker.market_buy(purchase_symbol, num_shares, time='gfd')
+            print(order_info)
             message = ('Purchasing %s shares '
                        'of %s' % (str(num_shares), purchase_symbol))
             print(message)
@@ -112,8 +113,8 @@ class DividendAnalyzer(Model):
     def payout_ratio_analysis(self, symbol):
         '''Yahoo payout ratio is occasionally much greater than 100%. Need to
            find out how they do their calculation
+           payout_ratio = annual_dividend / curr_eps_estimated
         '''
-        # payout_ratio = annual_dividend / curr_eps_estimated
         payout_ratio = yahoo.get_payout_ratio(symbol)
         if payout_ratio is None:
             payout_ratio_score = 1.0
@@ -165,7 +166,12 @@ class DividendAnalyzer(Model):
     def analyst_rating_analysis(self, symbol):
         '''
         '''
-        num_buy_ratings = broker.get_buy_rating(symbol)
+        try:
+            num_buy_ratings = broker.get_buy_rating(symbol)
+        except Exception as err:
+            print(err)
+            analyst_score = 0.0
+
         if num_buy_ratings is None:
             analyst_score = 0.0
             return analyst_score

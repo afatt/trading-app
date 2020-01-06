@@ -210,9 +210,9 @@ def main():
     token_dict = robinhood_auth(username, password , 60,
                                 'internal', True, True )
     #print(market_buy('LLNW', 1, time='gfd'))
-    #print(get_open_orders())
+    print(get_open_orders())
 
-    print(robin_stocks.load_account_profile())
+    #print(robin_stocks.load_account_profile())
 
 if __name__ == '__main__':
     main()

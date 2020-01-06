@@ -79,19 +79,21 @@ def execute_trader():
     dividend_analyzer = trader.DividendAnalyzer()
     trader_dividend = trader.Trader(dividend_analyzer)
 
-    # day_of_week = util.get_day_of_week()
-    # if day_of_week in 'monday':
-    #     schedule.every().monday.at('10:00').do(trader_dividend.execute_model)
-    # elif day_of_week in 'tuesday':
-    #     schedule.every().tuesday.at('10:00').do(trader_dividend.execute_model)
-    # elif day_of_week in 'wednesday':
-    #     schedule.every().wednesday.at('10:00').do(trader_dividend.execute_model)
-    # elif day_of_week in 'thursday':
-    #     schedule.every().thursday.at('10:00').do(trader_dividend.execute_model)
-    # else:
-    #     schedule.every().friday.at('10:00').do(trader_dividend.execute_model)
+    day_of_week = util.get_day_of_week()
+    day_of_week = day_of_week.lower()
+    if day_of_week in 'monday':
+        print('Executing trader at 10:00am on Monday')
+        schedule.every().monday.at('16:04').do(trader_dividend.execute_model)
+    elif day_of_week in 'tuesday':
+        schedule.every().tuesday.at('10:00').do(trader_dividend.execute_model)
+    elif day_of_week in 'wednesday':
+        schedule.every().wednesday.at('10:00').do(trader_dividend.execute_model)
+    elif day_of_week in 'thursday':
+        schedule.every().thursday.at('10:00').do(trader_dividend.execute_model)
+    else:
+        schedule.every().friday.at('10:00').do(trader_dividend.execute_model)
 
-    schedule.every(1).minutes.do(trader_dividend.execute_model)
+    #schedule.every(1).minutes.do(trader_dividend.execute_model)
     #schedule.every(1).saturday.at('15:56').do(trader_dividend.execute_model)
     while True:
         schedule.run_pending()
