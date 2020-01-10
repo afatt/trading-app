@@ -57,9 +57,11 @@ def prompt_day_of_week():
     '''
     print('                 Options')
     print('--------------------------------------------')
-    print('Monday, Tuesday, Wednesday, Thursday, Friday')
-    day_of_week = input('Enter the day of the week you would like to invest: ')
-    if day_of_week.lower() in 'monday tuesday wednesday thursday friday':
+    print('Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday')
+    day_of_week = input('Enter the day or days of the week you '
+                        'would like to invest: ')
+    day_of_week = day_of_week.lower()
+    if day_of_week in 'monday tuesday wednesday thursday friday saturday sunday':
         util.set_param('day_of_week', day_of_week)
     else:
         print('Day of week not found, try again')
@@ -80,18 +82,31 @@ def execute_trader():
     trader_dividend = trader.Trader(dividend_analyzer)
 
     day_of_week = util.get_day_of_week()
-    day_of_week = day_of_week.lower()
-    if day_of_week in 'monday':
+    if 'monday' in day_of_week:
         print('Executing trader at 10:00am on Monday')
         schedule.every().monday.at('10:00').do(trader_dividend.execute_model)
-    elif day_of_week in 'tuesday':
+    if 'tuesday' in day_of_week:
+        print('Executing trader at 10:00am on Tuesday')
         schedule.every().tuesday.at('10:00').do(trader_dividend.execute_model)
-    elif day_of_week in 'wednesday':
+    if 'wednesday' in day_of_week:
+        print('Executing trader at 10:00am on Wednesday')
         schedule.every().wednesday.at('10:00').do(trader_dividend.execute_model)
-    elif day_of_week in 'thursday':
+    if 'thursday' in day_of_week:
+        print('Executing trader at 10:00am on Thursday')
         schedule.every().thursday.at('10:00').do(trader_dividend.execute_model)
-    else:
+    if 'friday' in day_of_week:
+        print('Executing trader at 10:00am on Friday')
         schedule.every().friday.at('10:00').do(trader_dividend.execute_model)
+    if 'saturday' in day_of_week:
+        print('Executing trader at 10:00am on Saturday')
+        print('Order will be placed however, purchase will execute on the next '
+              'open trading day')
+        schedule.every().saturday.at('10:00').do(trader_dividend.execute_model)
+    if 'sunday' in day_of_week:
+        print('Executing trader at 10:00am on Sunday')
+        print('Order will be placed however, purchase will execute on the next '
+              'open trading day')
+        schedule.every().sunday.at('10:00').do(trader_dividend.execute_model)
 
     #schedule.every(1).minutes.do(trader_dividend.execute_model)
     while True:

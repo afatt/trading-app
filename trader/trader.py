@@ -24,6 +24,7 @@ class Trader():
         self._token_dict = broker.robinhood_auth(self._username,
                                                  self._password, 86400,
                                                  'internal', True, True )
+        # Calculate and prompt the user when the next login will be Required
 
     def execute_model(self):
         self._model.model_interface()
@@ -53,11 +54,12 @@ class DividendAnalyzer(Model):
         prospects = broker.get_watchlist_symbols()
         purchase_symbol = self.trade_study(prospects)
         num_shares, total_cost = self.order_quantity(purchase_symbol)
-        # Make this its own method
         buying_power = broker.get_buying_power()
         print('Buying power: %s' % str(buying_power))
         if buying_power >= total_cost:
-            order_info = broker.market_buy(purchase_symbol, num_shares, time='gfd')
+            order_info = broker.market_buy(purchase_symbol,
+                                           num_shares,
+                                           time='gfd')
             print(order_info)
             message = ('Purchasing %s shares '
                        'of %s' % (str(num_shares), purchase_symbol))
@@ -65,7 +67,7 @@ class DividendAnalyzer(Model):
             logging.info(message)
         else:
             message = ('Could not purchase %s shares of %s due to '
-                      'insufficient funds' % (str(num_shares), purchase_symbol))
+                       'insufficient funds' % (str(num_shares),purchase_symbol))
             print(message)
             logging.info(message)
         print('Ran in %s seconds' % str(datetime.now() - start_time))
@@ -222,24 +224,12 @@ class DividendAnalyzer(Model):
 
 
 def main():
+    # FOR TESTING PURPOSES ONLY
     # If portfolio hits the 52 dividend stocks quota start balancing model
     dividend_analyzer = DividendAnalyzer()
     trader_dividend = Trader(dividend_analyzer)
 
-    # day_of_week = util.get_day_of_week()
-    # if day_of_week in 'monday':
-    #     schedule.every().monday.at('10:00').do(trader_dividend.execute_model)
-    # elif day_of_week in 'tuesday':
-    #     schedule.every().tuesday.at('10:00').do(trader_dividend.execute_model)
-    # elif day_of_week in 'wednesday':
-    #     schedule.every().wednesday.at('10:00').do(trader_dividend.execute_model)
-    # elif day_of_week in 'thursday':
-    #     schedule.every().thursday.at('10:00').do(trader_dividend.execute_model)
-    # else:
-    #     schedule.every().friday.at('10:00').do(trader_dividend.execute_model)
-
     schedule.every(1).minutes.do(trader_dividend.execute_model)
-    #schedule.every(1).saturday.at('15:56').do(trader_dividend.execute_model)
     while True:
         schedule.run_pending()
         time.sleep(1)
