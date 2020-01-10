@@ -61,10 +61,13 @@ def prompt_day_of_week():
     day_of_week = input('Enter the day or days of the week you '
                         'would like to invest: ')
     day_of_week = day_of_week.lower()
-    if day_of_week in 'monday tuesday wednesday thursday friday saturday sunday':
-        util.set_param('day_of_week', day_of_week)
-    else:
-        print('Day of week not found, try again')
+    days = ['monday', 'tuesday', 'wednesday', 'thursday',
+            'friday', 'saturday', 'sunday']
+    set_day = ''
+    for day in days:
+        if day in day_of_week:
+            set_day += ' ' + day
+    util.set_param('day_of_week', set_day)
 
 def prompt_contribution():
     '''Prompt the user for contribution amount in $ (US Dollars)
