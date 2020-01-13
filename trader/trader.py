@@ -5,7 +5,6 @@
 import abc
 import time
 import logging
-from datetime import datetime
 
 # Third Party
 import schedule
@@ -50,7 +49,7 @@ class DividendAnalyzer(Model):
                             datefmt='%H:%M:%S')
 
     def model_interface(self):
-        start_time = datetime.now()
+        start_time = time.time()
         while True:
             try:
                 prospects = broker.get_watchlist_symbols()
@@ -84,7 +83,8 @@ class DividendAnalyzer(Model):
                        'insufficient funds' % (str(num_shares),purchase_symbol))
             print(message)
             logging.info(message)
-        print('Ran in %s seconds' % str(datetime.now() - start_time))
+        runtime = round(time.time() - start_time, 2)
+        print('Ran in %s seconds' % str(runtime))
 
     def trade_study(self, prospects):
         '''Why certain weights got the value they did
