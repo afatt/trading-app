@@ -111,7 +111,6 @@ def execute_trader():
               'open trading day')
         schedule.every().sunday.at('10:00').do(trader_dividend.execute_model)
 
-    #schedule.every(1).minutes.do(trader_dividend.execute_model)
     while True:
         schedule.run_pending()
         time.sleep(1)

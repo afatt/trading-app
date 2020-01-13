@@ -74,7 +74,10 @@ def get_watchlist_symbols():
     for name in my_list_names:
         for item in robin_stocks.get_watchlist_by_name(name):
             instrument_data = robin_stocks.get_instrument_by_url(item['instrument'])
-            symbol = instrument_data['symbol']
+            try:
+                symbol = instrument_data['symbol']
+            except TypeError:
+                raise Exception('Could not return symbol')
             watchlist_symbols.append(symbol)
 
     # Remove stocks in your portfolio from the watchlist

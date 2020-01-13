@@ -51,15 +51,29 @@ class DividendAnalyzer(Model):
 
     def model_interface(self):
         start_time = datetime.now()
-        prospects = broker.get_watchlist_symbols()
+        while True:
+            try:
+                prospects = broker.get_watchlist_symbols()
+                break
+            except Exception:
+                pass
+
         purchase_symbol = self.trade_study(prospects)
         num_shares, total_cost = self.order_quantity(purchase_symbol)
+        print('Total Cost: %s' % str(total_cost))
         buying_power = broker.get_buying_power()
         print('Buying power: %s' % str(buying_power))
         if buying_power >= total_cost:
-            order_info = broker.market_buy(purchase_symbol,
-                                           num_shares,
-                                           time='gfd')
+            while True:
+                order_info = broker.market_buy(purchase_symbol,
+                                               num_shares,
+                                               time='gfd')
+                try:
+                    # Sometimes the order doesn't go through due to this error
+                    # Prices above $1.00 can't have subpenny increments
+                    price = order_info['price'][0]
+                    if 'Prices above $1.00' not in price:
+                         break
             print(order_info)
             message = ('Purchasing %s shares '
                        'of %s' % (str(num_shares), purchase_symbol))
