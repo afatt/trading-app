@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 '''The main in this module is for testing new functions and changes only
 '''
 

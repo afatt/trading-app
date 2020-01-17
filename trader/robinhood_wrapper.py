@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 '''The main in this module is for testing new functions and changes only
 '''
 
@@ -66,19 +66,25 @@ def get_buying_power():
     return buying_power
 
 def get_watchlist_symbols():
-    my_list_names = []
+    '''Returns the watchlist symbols from the user's Robinhood account
+       Symbols from user's portfolio will be removed to avoid repurchase
+       Symbols with broken url will not be added to the list
+    '''
     watchlist_symbols = []
-    for name in robin_stocks.get_all_watchlists(info='name'):
-        my_list_names.append(name)
+    try:
+        instrument_dict = robin_stocks.get_watchlist_by_name('Default')
+    except Exception:
+        raise Exception('Could not return Default Watchlist')
 
-    for name in my_list_names:
-        for item in robin_stocks.get_watchlist_by_name(name):
-            instrument_data = robin_stocks.get_instrument_by_url(item['instrument'])
-            try:
-                symbol = instrument_data['symbol']
-            except TypeError:
-                raise Exception('Could not return symbol')
-            watchlist_symbols.append(symbol)
+    for item in instrument_dict:
+        instrument_data = robin_stocks.get_instrument_by_url(item['instrument'])
+
+        # Insturment urls that return as error 401 will not be added to list
+        try:
+            symbol = instrument_data['symbol']
+        except KeyError:
+            pass
+        watchlist_symbols.append(symbol)
 
     # Remove stocks in your portfolio from the watchlist
     portfolio = get_portfolio()
@@ -213,7 +219,7 @@ def main():
     token_dict = robinhood_auth(username, password , 86400 * 7,
                                 'internal', True, True )
     #print(market_buy('LLNW', 1, time='gfd'))
-    print(get_buying_power())
+    print(get_watchlist_symbols())
 
     #print(robin_stocks.load_account_profile())
 

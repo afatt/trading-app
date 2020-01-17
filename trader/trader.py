@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 '''Automated Trader for personal finance'''
 
 # Standard Library
@@ -21,7 +21,7 @@ class Trader():
         self._model = model
         self._username, self._password = util.get_login_info()
         self._token_dict = broker.robinhood_auth(self._username,
-                                                 self._password, 86400,
+                                                 self._password, 86400 * 7,
                                                  'internal', True, True )
         # Calculate and prompt the user when the next login will be Required
 
@@ -50,12 +50,7 @@ class DividendAnalyzer(Model):
 
     def model_interface(self):
         start_time = time.time()
-        while True:
-            try:
-                prospects = broker.get_watchlist_symbols()
-                break
-            except Exception:
-                pass
+        prospects = broker.get_watchlist_symbols()
 
         purchase_symbol = self.trade_study(prospects)
         num_shares, total_cost = self.order_quantity(purchase_symbol)
@@ -67,12 +62,12 @@ class DividendAnalyzer(Model):
                 order_info = broker.market_buy(purchase_symbol,
                                                num_shares,
                                                time='gfd')
-                try:
-                    # Sometimes the order doesn't go through due to this error
-                    # Prices above $1.00 can't have subpenny increments
-                    price = order_info['price'][0]
-                    if 'Prices above $1.00' not in price:
-                         break
+                # Sometimes the order doesn't go through due to this error
+                # Prices above $1.00 can't have subpenny increments
+                price = order_info['price'][0]
+                if 'Prices above $1.00' not in price:
+                    break
+
             print(order_info)
             message = ('Purchasing %s shares '
                        'of %s' % (str(num_shares), purchase_symbol))
@@ -110,6 +105,7 @@ class DividendAnalyzer(Model):
             annual_return_score = self.annual_return_analysis(symbol)
             payout_ratio_score = self.payout_ratio_analysis(symbol)
             print(symbol)
+            print('-----------------------------------------------------------')
             print('Eps: %s, ARating: %s, AnReturn: %s, PayRatio:'
                   ' %s' % (str(eps_score), str(analyst_rating_score), \
                   str(annual_return_score), str(payout_ratio_score)))

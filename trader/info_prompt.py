@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 '''Check user_info.yml and create if doesnt exist
    Prompt the user for robinhood username and password and save in user_info.yml
    Prompt user for day of the week Monday - Friday to automatically invest
@@ -96,7 +96,7 @@ def execute_trader():
         schedule.every().wednesday.at('10:00').do(trader_dividend.execute_model)
     if 'thursday' in day_of_week:
         print('Executing trader at 10:00am on Thursday')
-        schedule.every().thursday.at('10:00').do(trader_dividend.execute_model)
+        schedule.every().thursday.at('15:12').do(trader_dividend.execute_model)
     if 'friday' in day_of_week:
         print('Executing trader at 10:00am on Friday')
         schedule.every().friday.at('10:00').do(trader_dividend.execute_model)
