@@ -10,9 +10,22 @@ def build_yaml():
     info_dict = {'username': 'username',
                  'password': 'password',
                  'contribution': 0.0,
-                 'day_of_week': 'monday'}
+                 'day_of_week': 'monday',
+                 'time_of_day': '10:00'}
     with open(FILE_NAME, 'w') as file:
         info = yaml.dump(info_dict, file)
+
+def get_contribution():
+    with open(FILE_NAME) as file:
+        user_pass = yaml.load(file, Loader=yaml.FullLoader)
+        contribution = user_pass['contribution']
+    return contribution
+
+def get_day_of_week():
+    with open(FILE_NAME) as file:
+        user_pass = yaml.load(file, Loader=yaml.FullLoader)
+        contribution = user_pass['day_of_week']
+    return contribution
 
 def get_login_info():
     with open(FILE_NAME) as file:
@@ -21,22 +34,10 @@ def get_login_info():
         password = user_pass['password']
     return [username, password]
 
-def get_contribution():
+def get_time_of_day():
     with open(FILE_NAME) as file:
         user_pass = yaml.load(file, Loader=yaml.FullLoader)
-        contribution = user_pass['contribution']
-    return contribution
-
-def get_frequency():
-    with open(FILE_NAME) as file:
-        user_pass = yaml.load(file, Loader=yaml.FullLoader)
-        contribution = user_pass['frequency']
-    return contribution
-
-def get_day_of_week():
-    with open(FILE_NAME) as file:
-        user_pass = yaml.load(file, Loader=yaml.FullLoader)
-        contribution = user_pass['day_of_week']
+        contribution = user_pass['time_of_day']
     return contribution
 
 def get_user_info():

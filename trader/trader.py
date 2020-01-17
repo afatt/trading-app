@@ -105,7 +105,7 @@ class DividendAnalyzer(Model):
             annual_return_score = self.annual_return_analysis(symbol)
             payout_ratio_score = self.payout_ratio_analysis(symbol)
             print(symbol)
-            print('-----------------------------------------------------------')
+            print('----------------------------------------------------')
             print('Eps: %s, ARating: %s, AnReturn: %s, PayRatio:'
                   ' %s' % (str(eps_score), str(analyst_rating_score), \
                   str(annual_return_score), str(payout_ratio_score)))

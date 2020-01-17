@@ -25,13 +25,14 @@ def check_user_info():
     if not path.exists(FILE_NAME):
         print('File doesnt exist')
         util.build_yaml()
+        return True
     else:
         print('User info found')
         user_info = util.get_user_info()
         print('-----------------------------------------------------')
         print('Username:        %s' % user_info['username'])
         print('Password:        %s' % user_info['password'])
-        print('Investment Day:  %s' % user_info['day_of_week'])
+        print('Investment Day: %s' % user_info['day_of_week'])
         print('Contribution:    $%s' % str(user_info['contribution']))
         print('-----------------------------------------------------')
         while True:
@@ -72,9 +73,15 @@ def prompt_day_of_week():
 def prompt_contribution():
     '''Prompt the user for contribution amount in $ (US Dollars)
     '''
-    contribution = input('Enter the amount you would like to invest each week: ')
+    contribution = input('Enter the amount you would like to invest: ')
     contribution = float(contribution)
     util.set_param('contribution', contribution)
+
+def prompt_time_of_day():
+    '''Prompt the user to set time of the day to run the trader
+    '''
+    time_of_day = input('Enter the time of day to run (Ex. 15:30): ')
+    util.set_param('time_of_day', time_of_day)
 
 def execute_trader():
     '''
@@ -85,31 +92,32 @@ def execute_trader():
     trader_dividend = trader.Trader(dividend_analyzer)
 
     day_of_week = util.get_day_of_week()
+    time_of_day = util.get_time_of_day()
     if 'monday' in day_of_week:
-        print('Executing trader at 10:00am on Monday')
-        schedule.every().monday.at('10:00').do(trader_dividend.execute_model)
+        print('Executing trader at %s on Monday' % time_of_day)
+        schedule.every().monday.at(time_of_day).do(trader_dividend.execute_model)
     if 'tuesday' in day_of_week:
-        print('Executing trader at 10:00am on Tuesday')
-        schedule.every().tuesday.at('10:00').do(trader_dividend.execute_model)
+        print('Executing trader at %s on Tuesday' % time_of_day)
+        schedule.every().tuesday.at(time_of_day).do(trader_dividend.execute_model)
     if 'wednesday' in day_of_week:
-        print('Executing trader at 10:00am on Wednesday')
-        schedule.every().wednesday.at('10:00').do(trader_dividend.execute_model)
+        print('Executing trader at %s on Wednesday' % time_of_day)
+        schedule.every().wednesday.at(time_of_day).do(trader_dividend.execute_model)
     if 'thursday' in day_of_week:
-        print('Executing trader at 10:00am on Thursday')
-        schedule.every().thursday.at('15:12').do(trader_dividend.execute_model)
+        print('Executing trader at %s on Thursday' % time_of_day)
+        schedule.every().thursday.at(time_of_day).do(trader_dividend.execute_model)
     if 'friday' in day_of_week:
-        print('Executing trader at 10:00am on Friday')
-        schedule.every().friday.at('10:00').do(trader_dividend.execute_model)
+        print('Executing trader at %s on Friday' % time_of_day)
+        schedule.every().friday.at(time_of_day).do(trader_dividend.execute_model)
     if 'saturday' in day_of_week:
-        print('Executing trader at 10:00am on Saturday')
+        print('Executing trader at %s on Saturday' % time_of_day)
         print('Order will be placed however, purchase will execute on the next '
               'open trading day')
-        schedule.every().saturday.at('10:00').do(trader_dividend.execute_model)
+        schedule.every().saturday.at(time_of_day).do(trader_dividend.execute_model)
     if 'sunday' in day_of_week:
-        print('Executing trader at 10:00am on Sunday')
+        print('Executing trader at %s on Sunday' % time_of_day)
         print('Order will be placed however, purchase will execute on the next '
               'open trading day')
-        schedule.every().sunday.at('10:00').do(trader_dividend.execute_model)
+        schedule.every().sunday.at(time_of_day).do(trader_dividend.execute_model)
 
     while True:
         schedule.run_pending()
@@ -120,6 +128,7 @@ def main():
         prompt_user_pass()
         prompt_day_of_week()
         prompt_contribution()
+        prompt_time_of_day()
     execute_trader()
 
 if __name__ == '__main__':
