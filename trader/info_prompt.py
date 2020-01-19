@@ -33,6 +33,7 @@ def check_user_info():
         print('Username:        %s' % user_info['username'])
         print('Password:        %s' % user_info['password'])
         print('Investment Day: %s' % user_info['day_of_week'])
+        print('Investment time: %s' % user_info['time_of_day'])
         print('Contribution:    $%s' % str(user_info['contribution']))
         print('-----------------------------------------------------')
         while True:

@@ -109,6 +109,7 @@ class DividendAnalyzer(Model):
             print('Eps: %s, ARating: %s, AnReturn: %s, PayRatio:'
                   ' %s' % (str(eps_score), str(analyst_rating_score), \
                   str(annual_return_score), str(payout_ratio_score)))
+            print('----------------------------------------------------')
             unweighted_score = eps_score + analyst_rating_score + \
                                annual_return_score + payout_ratio_score
             weighted_score = eps_score * eps_weight + analyst_rating_score * \
