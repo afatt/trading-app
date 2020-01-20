@@ -91,7 +91,10 @@ def execute_trader():
     # If portfolio hits the 52 dividend stocks quota start balancing model
     dividend_analyzer = trader.DividendAnalyzer()
     trader_dividend = trader.Trader(dividend_analyzer)
-
+    username, password = util.get_login_info()
+    token_dict = broker.robinhood_auth(username,
+                                       password, 86400 * 7,
+                                       'internal', True, True )
     day_of_week = util.get_day_of_week()
     time_of_day = util.get_time_of_day()
     if 'monday' in day_of_week:

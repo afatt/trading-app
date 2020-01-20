@@ -1,13 +1,16 @@
 # trading-app
-This is a temporary format for the README this is not what a README is
-used for
-
-# Before running the app
-1. Explain to the user the idea behind the app
+***My idea behind the trading app***
    - Saving money by investing instead of sitting in a bank
    - Having your saved money gain income from dividends
    - Saving automatically once per week
    - Amount to save is (monthly income - expenses) / 4
+
+## How to Install:
+**Clone the repository into your desired directory using:**
+'git clone https://github.com/afatt/trading-app.git'
+
+## Run the app:
+1. Start the script: 'python3 info_prompt.py'
 
 # After running the app
 1. Prompt the user for a robinhood username and password
@@ -19,7 +22,7 @@ used for
 3. Ask the user what day of the week they would like to invest and what
    frequency once per month, once per week?
 
-# Useful links and References
+## Useful links and References
 robin_stocks functions:
 http://www.robin-stocks.com/en/latest/functions.html
 

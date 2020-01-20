@@ -23,7 +23,7 @@ class Trader():
         self._token_dict = broker.robinhood_auth(self._username,
                                                  self._password, 86400 * 7,
                                                  'internal', True, True )
-        # Calculate and prompt the user when the next login will be Required
+        #Calculate and prompt the user when the next login will be Required
 
     def execute_model(self):
         self._model.model_interface()

@@ -17,7 +17,7 @@ def robinhood_auth(usr, pwd, exp, scope, sms, store_session):
                Returns: dictionary with keys 'access_token' and 'detail'
     '''
 
-    token_dict = robin_stocks.login(usr, pwd)
+    token_dict = robin_stocks.login(usr, pwd, exp, scope, sms, store_session)
     return token_dict
 
 def market_buy(symbol, quantity, time):
@@ -218,10 +218,7 @@ def main():
     username, password = util.get_login_info()
     token_dict = robinhood_auth(username, password , 86400 * 7,
                                 'internal', True, True )
-    #print(market_buy('LLNW', 1, time='gfd'))
-    print(get_watchlist_symbols())
-
-    #print(robin_stocks.load_account_profile())
+    print(token_dict)
 
 if __name__ == '__main__':
     main()
