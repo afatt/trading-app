@@ -7,10 +7,10 @@
 
 ## How to Install:
 **Clone the repository into your desired directory using:**
-'git clone https://github.com/afatt/trading-app.git'
+`git clone https://github.com/afatt/trading-app.git`
 
 ## Run the app:
-1. Start the script: 'python3 info_prompt.py'
+1. Start the script: `python3 info_prompt.py`
 
 # After running the app
 1. Prompt the user for a robinhood username and password
