@@ -1,7 +1,6 @@
 import sys
 from setuptools import setup, find_packages
 
-HERE = path.abspath(path.dirname(__file__))
 __version__ = '1.0.0'
 
 REQUIRES = [
