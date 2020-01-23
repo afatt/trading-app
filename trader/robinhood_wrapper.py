@@ -75,16 +75,11 @@ def get_watchlist_symbols():
         instrument_dict = robin_stocks.get_watchlist_by_name('Default')
     except Exception:
         raise Exception('Could not return Default Watchlist')
+    #print(instrument_dict)
 
-    for item in instrument_dict:
-        instrument_data = robin_stocks.get_instrument_by_url(item['instrument'])
-
-        # Insturment urls that return as error 401 will not be added to list
-        try:
-            symbol = instrument_data['symbol']
-        except KeyError:
-            pass
-        watchlist_symbols.append(symbol)
+    instrument_data = [robin_stocks.get_instrument_by_url(item['instrument']) \
+                       for item in instrument_dict if item]
+    watchlist_symbols = [item['symbol'] for item in instrument_data if item]
 
     # Remove stocks in your portfolio from the watchlist
     portfolio = get_portfolio()
@@ -218,7 +213,7 @@ def main():
     username, password = util.get_login_info()
     token_dict = robinhood_auth(username, password , 86400 * 7,
                                 'internal', True, True )
-    print(token_dict)
+    print(get_watchlist_symbols())
 
 if __name__ == '__main__':
     main()
