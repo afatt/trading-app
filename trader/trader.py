@@ -128,7 +128,14 @@ class DividendAnalyzer(Model):
            find out how they do their calculation
            payout_ratio = annual_dividend / curr_eps_estimated
         '''
-        payout_ratio = yahoo.get_payout_ratio(symbol)
+        try:
+            payout_ratio = yahoo.get_payout_ratio(symbol)
+        except Exception:
+            payout_ratio = None
+            payout_ratio_score = 1.0
+            message = ('Could not get payout ratio for %s' % symbol)
+            logging.warning(message)
+
         if payout_ratio is None:
             payout_ratio_score = 1.0
             return payout_ratio_score
