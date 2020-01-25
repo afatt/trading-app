@@ -5,11 +5,14 @@
    - Saving automatically once per week
    - Amount to save is (monthly income - expenses) / 4
 
-## How to Install:
-**Clone the repository into your desired directory using:**
-`git clone https://github.com/afatt/trading-app.git`
-**Next:**
-`pip install .`
+### How to Install:
+Clone the repository into your desired directory using:
+
+    git clone https://github.com/afatt/trading-app.git
+
+Next:
+
+    pip install .
 
 ### Run the app:
 Start the script:
