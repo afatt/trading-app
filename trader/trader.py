@@ -68,7 +68,6 @@ class DividendAnalyzer(Model):
                 if 'Prices above $1.00' not in price:
                     break
 
-            print(order_info)
             message = ('Purchasing %s shares '
                        'of %s' % (str(num_shares), purchase_symbol))
             print(message)
