@@ -3,8 +3,9 @@
 '''
 
 import util
+import pymysql
 import robin_stocks
-
+from io import StringIO
 
 def robinhood_auth(usr, pwd, exp, scope, sms, store_session):
     '''Authorization to robinhood account:
@@ -16,6 +17,7 @@ def robinhood_auth(usr, pwd, exp, scope, sms, store_session):
                         authorization for future logins
                Returns: dictionary with keys 'access_token' and 'detail'
     '''
+    # Send message to app.js saying to input mfa_code
 
     token_dict = robin_stocks.login(usr, pwd, exp, scope, sms, store_session)
     return token_dict
@@ -213,7 +215,19 @@ def main():
     username, password = util.get_login_info()
     token_dict = robinhood_auth(username, password , 86400 * 7,
                                 'internal', True, True )
-    print(get_watchlist_symbols())
+    url = 'https://api.robinhood.com/oauth2/token'
+    payload = {
+        'client_id': 'c82SH0WZOsabOXGP2sxqcj34FxkvfnWRZBKlBjFS',
+        'expires_in': 86400,
+        'grant_type': 'password',
+        'password': 'THISismylogin@87',
+        'scope': 'internal',
+        'username': 'afatt90@gmail.com',
+        'challenge_type': 'sms',
+        'device_token': '86188087-ade1-0522-8600-a06d45b7b8be'
+        }
+    res = robin_stocks.helper.request_post(url, payload)
+    print(res)
 
 if __name__ == '__main__':
     main()

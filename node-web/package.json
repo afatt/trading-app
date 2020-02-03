@@ -8,9 +8,12 @@
   "keywords": [
     "nodejs",
     "bootstrap",
-    "express"
+    "express",
+    "mysql"
   ],
   "dependencies": {
-    "express": "^4.16.4"
+    "axios": "^0.16.2",
+    "express": "^4.16.4",
+    "mysql": "^2.18.1"
   }
 }

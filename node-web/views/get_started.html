@@ -12,33 +12,42 @@
 <nav class="navbar navbar-dark bg-dark navbar-static-top navbar-expand-md">
     <div class="container">
         <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false"> <span class="sr-only">Toggle navigation</span>
-        </button> <a class="navbar-brand" href="/">Everything Sharks</a>
+        </button> <a class="navbar-brand" href="/">Dividend Trader</a>
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav mr-auto">
                 <li class="nav-item"><a href="/" class="nav-link">Home</a>
                 </li>
-                <li class="active nav-item"><a href="/sharks" class="nav-link">Sharks</a>
+                <li class="active nav-item"><a href="/get_started" class="nav-link">About Us</a>
                 </li>
             </ul>
         </div>
     </div>
 </nav>
 <div class="jumbotron text-center">
-    <h1>Shark Info</h1>
+    <h1>Getting Started</h1>
 </div>
 <div class="container">
     <div class="row">
         <div class="col-lg-6">
-            <p>
-                <div class="caption">Some sharks are known to be dangerous to humans, though many more are not. The sawshark, for example, is not considered a threat to humans.
-                </div>
-                <img src="https://assets.digitalocean.com/articles/docker_node_image/sawshark.jpg" alt="Sawshark">
-            </p>
+            <form action="/send" method="POST">
+                <label for="broker">Choose Your Broker</label>
+                <select id="broker" name="broker">
+                  <option value="robinhood">Robinhood</option>
+                </select>
+
+                <label for="usrname">Broker Username</label>
+                <input type="text" id="usrname" name="username" placeholder="Your username here ...">
+
+                <label for="usrname">Broker Password</label>
+                <input type="password" id="pwd" name="password" placeholder="Your password here ...">
+
+                <input type="submit" value="Submit">
+            </form>
         </div>
         <div class="col-lg-6">
             <p>
-                <div class="caption">Other sharks are known to be friendly and welcoming!</div>
-                <img src="https://assets.digitalocean.com/articles/docker_node_image/sammy.png" alt="Sammy the Shark">
+                <div class="caption">Watchout she is vicious!</div>
+                <img src="mika-pitty.jpg" alt="Mika the Pocket Pitty">
             </p>
         </div>
     </div>
