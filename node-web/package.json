@@ -12,7 +12,7 @@
     "mysql"
   ],
   "dependencies": {
-    "axios": "^0.16.2",
+    "axios": "^0.21.1",
     "express": "^4.16.4",
     "mysql": "^2.18.1"
   }
